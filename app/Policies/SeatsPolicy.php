@@ -13,7 +13,7 @@ class SeatsPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class SeatsPolicy
      */
     public function view(User $user, Seats $seats): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class SeatsPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +37,7 @@ class SeatsPolicy
      */
     public function update(User $user, Seats $seats): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -45,7 +45,7 @@ class SeatsPolicy
      */
     public function delete(User $user, Seats $seats): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class SeatsPolicy
      */
     public function restore(User $user, Seats $seats): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +61,6 @@ class SeatsPolicy
      */
     public function forceDelete(User $user, Seats $seats): bool
     {
-        return false;
+        return true;
     }
 }
