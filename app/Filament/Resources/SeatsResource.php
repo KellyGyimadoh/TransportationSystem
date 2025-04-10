@@ -71,7 +71,8 @@ class SeatsResource extends Resource
 
                             // Fetch the latest seat count directly from the database
                             $seatCount = Seats::where('bus_id', $busId)
-                                ->when($currentSeatId, fn($query) => $query->where('id', '!=', $currentSeatId))
+                                ->when($currentSeatId, fn($query) 
+                                => $query->where('id', '!=', $currentSeatId))
                                 ->count();
 
                             if ($seatCount >= (int) $busCapacity) {
@@ -83,7 +84,7 @@ class SeatsResource extends Resource
                     'available' => 'Available',
                     'booked' => 'Booked',
                     'reserved' => 'Reserved'
-                ])->required(),
+                ])->required()->default('available'),
             ]);
 
 

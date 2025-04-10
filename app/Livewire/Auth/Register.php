@@ -36,11 +36,11 @@ class Register extends Component
         $validated['password'] = Hash::make($validated['password']);
 
         event(new Registered(($user = User::create($validated))));
-        if(!Role::where('name', 'customer')->exists()) {
-            Role::create(['name'=>'customer']);
+        if(!Role::where('name', 'online_customer')->exists()) {
+            Role::create(['name'=>'online_customer']);
 
         }
-        $user->assignRole('customer');
+        $user->assignRole('online_customer');
 
         Auth::login($user);
 

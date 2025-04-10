@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -31,14 +32,23 @@ class Login extends Component
         $this->validate();
 
         $this->ensureIsNotRateLimited();
+        $user=User::where('email', $this->email)->first();
+        if( !$user->hasRole(['admin','online_customer'])){
+            throw ValidationException::withMessages([
+                'email'=> 'Not Allowed',
+            ]);
+        }
 
-        if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)
+       
+       ) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
         }
+       
 
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();

@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('bus_id')->constrained('buses')->cascadeOnDelete();
             $table->foreignId('route_id')->constrained('journey_routes')->cascadeOnDelete();
-            $table->timestamp('departure_time')->nullable();
-            $table->timestamp('arrival_time')->nullable();
+           
+            $table->time('departure_time')->nullable();
+            $table->time('arrival_time')->nullable();
             $table->decimal('price',10,2)->nullable();
             $table->enum('status', ['scheduled','ongoing','completed','canceled'])->default('scheduled');
             $table->timestamps();

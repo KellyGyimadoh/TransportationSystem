@@ -11,12 +11,12 @@ class BookingSeats extends Model
     protected $fillable = ['booking_id', 'seat_id'];
     public function booking()
     {
-        return $this->belongsTo(Bookings::class);
+        return $this->belongsTo(Bookings::class,'booking_id');
     }
 
     public function seat()
     {
-        return $this->belongsTo(Seats::class);
+        return $this->belongsTo(Seats::class,'seat_id');
     }
     public function ticket()
     {

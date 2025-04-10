@@ -9,7 +9,27 @@ class Bookings extends Model
 {
     /** @use HasFactory<\Database\Factories\BookingsFactory> */
     use HasFactory;
-    protected $fillable = ['user_id', 'trip_id', 'status', 'payment_status'];
+    protected $fillable = ['user_id', 'trip_id', 'status', 'payment_status','trip_date'];
+
+
+    protected static function booted()
+{
+    // static::created(function (Bookings $booking) {
+    //     $seatIds = $booking->seats()->pluck('seats.id')->toArray();
+    //     dd($seatIds);
+    //     // Optional: revert all seats previously assigned to this booking
+    //     Seats::whereIn('id', $seatIds)
+    //         ->update(['status' => 'booked']);
+
+       
+    // });
+
+    static::deleting(function (Bookings $booking) {
+        // When the booking is deleted, update the status of all associated seats to 'available'
+        $booking->seats()->update(['status' => 'available']);
+    });
+}
+
 
      // A booking belongs to a user
     public function user(){
@@ -22,7 +42,8 @@ class Bookings extends Model
     }
      // A booking has many seats (through pivot table)
     public function seats() {
-        return $this->belongsToMany(Seats::class, 'booking_seats');
+        return $this->belongsToMany(Seats::class, 'booking_seats',
+        'booking_id','seat_id');
     }
     
     // A booking has one payment
@@ -30,5 +51,9 @@ class Bookings extends Model
     {
         return $this->hasOne(Payment::class);
     }
-    
+    public function isRefundable(): bool
+    {
+        // Customize this logic
+        return now()->diffInMinutes($this->event_time, false) > 60; // Refund if > 1 hour before event
+    } 
 }

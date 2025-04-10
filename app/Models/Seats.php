@@ -13,7 +13,8 @@ class Seats extends Model
 
     // A seat can be booked through booking_seats table
     public function bookings() {
-        return $this->belongsToMany(Bookings::class, 'booking_seats');
+        return $this->belongsToMany(Bookings::class, 'booking_seats',
+        'seat_id','booking_id');
     }
     // A seat belongs to a bus
     public function bus(){

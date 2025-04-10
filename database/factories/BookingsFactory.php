@@ -17,7 +17,7 @@ class BookingsFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            
         ];
     }
 }

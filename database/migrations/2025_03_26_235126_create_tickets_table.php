@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('issued_by')->constrained('users')->cascadeOnDelete();
             $table->foreignId('issued_for')->constrained('users')->cascadeOnDelete();
             $table->timestamp('issue_date')->default(now());
+            $table->date('trip_date'); // Each trip happens on a specific date
             $table->enum('status', ['valid','used','expired'])->default('valid');
             $table->timestamps();
         });

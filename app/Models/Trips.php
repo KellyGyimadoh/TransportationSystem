@@ -18,7 +18,7 @@ class Trips extends Model
 
     // A trip belongs to a bus
     public function bus(){
-        return $this->hasMany(Buses::class);
+        return $this->belongsTo(Buses::class,'bus_id');
     }
 
      // A trip has a route

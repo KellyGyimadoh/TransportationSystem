@@ -15,6 +15,10 @@
                 <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
                 </flux:navbar.item>
+               
+                <flux:navbar.item icon="layout-grid" :href="route('bookings')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    {{ __('Book A Trip') }}
+                </flux:navbar.item>
             </flux:navbar>
 
             <flux:spacer />
@@ -95,11 +99,15 @@
             <a href="{{ route('dashboard') }}" class="ml-1 flex items-center space-x-2" wire:navigate>
                 <x-app-logo />
             </a>
+           
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')">
                     <flux:navlist.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="layout-grid" :href="route('bookings')" :current="request()->routeIs('bookings')" wire:navigate>
+                    {{ __('Book A Trip') }}
                     </flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
@@ -120,5 +128,6 @@
         {{ $slot }}
 
         @fluxScripts
+        @livewireScripts
     </body>
 </html>
