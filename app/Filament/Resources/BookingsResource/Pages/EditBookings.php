@@ -3,11 +3,10 @@
 namespace App\Filament\Resources\BookingsResource\Pages;
 
 use App\Filament\Resources\BookingsResource;
+use App\Models\SeatReservation;
 use App\Models\Seats;
 use App\Models\Trips;
-use DB;
 use Filament\Actions;
-use Filament\Forms\Components\Builder;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Validation\ValidationException;
@@ -24,7 +23,7 @@ class EditBookings extends EditRecord
     }
     protected static function getEloquentQuery()
     {
-        return parent::getEloquentQuery()->with('seats');
+        return parent::getEloquentQuery()->with(['seatReservations', 'seats']);
     }
     protected function afterSave(): void
     {
@@ -32,49 +31,82 @@ class EditBookings extends EditRecord
     }
 
     protected function updateSeatStatuses(): void
-    {
-        $newSeatIds = $this->record->seats()->pluck('seats.id')->toArray();
-        $oldSeatIds = $this->record->getOriginal('seats') ?? [];
-        $bookingCanceled = $this->record->status === 'canceled';
+{
+    $selectedSeatIds = $this->form->getState()['seats'];
+    $existingSeatIds = SeatReservation::where('booking_id', $this->record->id)
+        ->pluck('seat_id')
+        ->toArray();
 
-      
+    $bookingCanceled = $this->record->status === 'canceled';
+    $newStatus = $this->record->payment_status === 'paid' ? 'booked' : 'reserved';
 
-        if ($bookingCanceled) {
-            Seats::whereIn('id', $newSeatIds)->update([
-                'status' => 'available',
-            ]);
-            return;
-        }
-
-        $removedSeatIds = array_diff($oldSeatIds, $newSeatIds);
-        $removedSeatsQueryIds = DB::table('booking_seats')
-            ->leftJoin('bookings', 'bookings.id', '=', 'booking_seats.booking_id')
-            ->pluck('booking_seats.seat_id');  // or use 'id' if seat_id is different
-
-        Seats::whereNotIn('id', $removedSeatsQueryIds)->update(['status' => 'available']);
-        Seats::whereIn('id', $newSeatIds)->update([
-            'status' => $this->record->payment_status === 'paid' ? 'booked' : 'reserved',
-        ]);
-
+    // Handle canceled booking
+    if ($bookingCanceled) {
+        SeatReservation::where('booking_id', $this->record->id)
+            ->update(['status' => 'cancelled']);
+        return;
     }
+
+    // Removed seat IDs
+    $removedSeatIds = collect($existingSeatIds)->diff($selectedSeatIds)->values()->toArray();
+
+    if (!empty($removedSeatIds)) {
+        SeatReservation::where('booking_id', $this->record->id)
+            ->whereIn('seat_id', $removedSeatIds)
+            ->update(['status' => 'cancelled']);
+    }
+
+    // New seat IDs (added)
+    $newSeatIds = collect($selectedSeatIds)->diff($existingSeatIds)->values()->toArray();
+
+    foreach ($newSeatIds as $seatId) {
+        SeatReservation::create([
+            'booking_id'    => $this->record->id,
+            'trip_id'       => $this->record->trip_id,
+            'user_id' => $this->record->user_id,
+            'seat_id'       => $seatId,
+            'booking_date'  => $this->record->trip_date,
+            'status'        => $newStatus,
+        ]);
+    }
+
+    // Update status for remaining (existing or newly added) seats
+    SeatReservation::where('booking_id', $this->record->id)
+        ->whereIn('seat_id', $selectedSeatIds)
+        ->update(['status' => $newStatus]);
+}
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
 
-        $data["seats"] = $this->record->seats()->pluck('seats.id')->toArray();
+        $data['bookingid'] = $this->record->id;
+        $data['tripId'] = $this->record->trip_id;
+        $data['selectedDate'] = $this->record->trip_date;
+        $data["seats"] = $this->record->seatReservations()->whereIn('status',['reserved','booked'])
+        ->pluck('seat_id')->toArray();
 
         $busHandlingTrip = Trips::where('id', $this->record->trip_id)->first();
         $data['bus'] = $busHandlingTrip->bus_id;
-        $data['seatsnumber'] = Seats::where('bus_id', $busHandlingTrip->bus_id)
-            ->where('status', 'available')
-            ->whereNotIn('id', $data['seats'])->count();
+        // $data['seats'] = SeatReservation::where('booking_id', $this->record->id)
+        // ->where('booking_date', $this->record->trip_date)
+        // ->whereIn('status', ['reserved', 'booked'])
+        // ->pluck('seat_id');
+
+        $reservedSeatIds = SeatReservation::where('trip_id', $this->record->trip_id)
+            ->whereIn('status', ['reserved', 'booked'])
+            ->pluck('seat_id')
+            ->toArray();
+
+        $data['seatsnumber'] = Seats::where('bus_id', $this->record->trip->bus_id)
+            ->whereNotIn('id', $reservedSeatIds)
+            ->count();
 
         return $data;
     }
-    protected function getRedirectUrl(): string|null
-    {
-        return $this->getResource()::geturl('view', ['record' => $this->record]);
-    }
+    // protected function getRedirectUrl(): string|null
+    // {
+    //     return $this->getResource()::geturl('index');
+    // }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {

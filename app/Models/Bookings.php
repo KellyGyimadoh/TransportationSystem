@@ -24,10 +24,14 @@ class Bookings extends Model
        
     // });
 
-    static::deleting(function (Bookings $booking) {
-        // When the booking is deleted, update the status of all associated seats to 'available'
-        $booking->seats()->update(['status' => 'available']);
-    });
+    // static::deleting(function (Bookings $booking) {
+    //     // When the booking is deleted, update the status of all associated seats to 'available'
+    //     $booking->seats()->update(['status' => 'available']);
+    // });
+}
+public function seatReservations()
+{
+    return $this->hasMany(SeatReservation::class,'booking_id','id');
 }
 
 
@@ -40,11 +44,11 @@ class Bookings extends Model
     public function trip(){
         return $this->belongsTo(Trips::class);
     }
-     // A booking has many seats (through pivot table)
-    public function seats() {
-        return $this->belongsToMany(Seats::class, 'booking_seats',
-        'booking_id','seat_id');
-    }
+     //A booking has many seats (through pivot table)
+    // public function seats() {
+    //     return $this->belongsToMany(Seats::class, 'booking_seats',
+    //     'booking_id','seat_id');
+    // }
     
     // A booking has one payment
     public function payment()
@@ -56,4 +60,8 @@ class Bookings extends Model
         // Customize this logic
         return now()->diffInMinutes($this->event_time, false) > 60; // Refund if > 1 hour before event
     } 
+
+    public function tickets(){
+        return $this->hasMany(Tickets::class,'booking_id');
+    }
 }

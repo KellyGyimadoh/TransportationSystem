@@ -25,4 +25,9 @@ class Trips extends Model
     public function routes(){
             return $this->belongsTo(JourneyRoutes::class,'route_id');
         }
+        public function seatReservations()
+{
+    return $this->hasMany(SeatReservation::class,'trip_id');
+}
+
 }

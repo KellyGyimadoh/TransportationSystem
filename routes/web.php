@@ -1,9 +1,12 @@
 <?php
 
 use App\Livewire\Bookings;
+use App\Livewire\PaymentsPage;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
+use App\Livewire\TicketsPage;
+use App\Livewire\UserBookings;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,6 +28,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
     //bookings
     Route::get('/bookings', Bookings::class)->name('bookings');
+    Route::get('/mybookings', UserBookings::class)->name('mybookings');
+    Route::get('/pay/{bookings}', PaymentsPage::class)->name('payment');
+    Route::get('/tickets/{bookings}',TicketsPage::class)->name('tickets');
 });
 
 require __DIR__.'/auth.php';

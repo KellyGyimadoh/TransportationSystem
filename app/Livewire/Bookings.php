@@ -78,9 +78,7 @@ class Bookings extends Component
                 ->orWhere('end_location','like','%'.$this->search.'%');
                 ;
             });
-        })
-        ->where('status', 'scheduled')
-        ->paginate(10)]);
+        })->paginate(10)]);
     }
     public function updating($key): void
     {

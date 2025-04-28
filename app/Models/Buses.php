@@ -20,7 +20,7 @@ class Buses extends Model
     // A bus has many seats
     public function seats()
     {
-        return $this->hasMany(Seats::class);
+        return $this->hasMany(Seats::class,'bus_id');
     }
 
 }
