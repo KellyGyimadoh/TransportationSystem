@@ -2,11 +2,15 @@
 
 namespace App\Providers;
 
+use App\Http\Resources\TripsResource;
+use App\Models\Trips;
+use Illuminate\Support\Facades\View;
 use Illuminate\Validation\ValidationException;
 use Filament\Pages\Page;
 use Illuminate\Support\ServiceProvider;
 use Filament\Notifications\Notification;
 
+use Illuminate\Support\Facades\Cache;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -28,5 +32,13 @@ class AppServiceProvider extends ServiceProvider
                 ->danger()
                 ->send();
         };
+
+        View::composer('welcome',function($view){
+            $trips= Cache::remember('trips',60*60,function(){
+                return TripsResource::collection(Trips::all());
+            });
+           $view->with('trips',$trips);
+
+        });
     }
 }

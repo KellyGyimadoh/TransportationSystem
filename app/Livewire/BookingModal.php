@@ -150,13 +150,13 @@ class BookingModal extends Component
                 ]);
 
                 // Attach seat to booking
-                $booking->seats()->attach($seat->id);
+               // $booking->seats()->attach($seat->id);
             }
         }
         
         $this->closeModal();
         session()->flash('success', 'Booking successful.');
-       $this->redirect('/bookings');
+       $this->redirectIntended();
 
     }
 

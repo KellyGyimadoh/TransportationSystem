@@ -7,11 +7,10 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use App\Livewire\TicketsPage;
 use App\Livewire\UserBookings;
+use App\Livewire\WelcomePage;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', WelcomePage::class)->name('home');
 
 Route::get('/about',function(){
     return view('about.index');
