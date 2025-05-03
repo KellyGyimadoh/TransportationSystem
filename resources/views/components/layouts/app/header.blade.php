@@ -3,7 +3,8 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
+    <body class="min-h-screen bg-white dark:bg-zinc-800" 
+    >
        
         
         <flux:header container class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
@@ -14,12 +15,15 @@
             </a>
 
             <flux:navbar class="-mb-px max-lg:hidden">
-                <flux:navbar.item icon="layout-grid" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>
+                <flux:navbar.item icon="home" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>
                     {{ __('Home') }}
                 </flux:navbar.item>
                
-                <flux:navbar.item icon="layout-grid" :href="route('bookings')" :current="request()->routeIs('bookings')" wire:navigate>
+                <flux:navbar.item icon="clipboard-document-list" :href="route('bookings')" :current="request()->routeIs('bookings')" wire:navigate>
                     {{ __('Book A Trip') }}
+                </flux:navbar.item>
+                <flux:navbar.item icon="credit-card" :href="route('mybookings')" :current="request()->routeIs('mybookings')" wire:navigate>
+                    {{ __('My Bookings') }}
                 </flux:navbar.item>
             </flux:navbar>
 
@@ -29,15 +33,26 @@
                 <flux:tooltip :content="__('Search')" position="bottom">
                     <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="magnifying-glass" href="#" :label="__('Search')" />
                 </flux:tooltip>
-                <flux:tooltip :content="__('Login')" position="bottom">
+                <flux:tooltip :content="__('Make A Report')" position="bottom">
                     <flux:navbar.item
                         class="h-10 max-lg:hidden [&>div>svg]:size-5"
-                        icon="folder-git-2"
-                        href="/login"
+                        icon="flag"
+                        href=""
                         target="_self"
                         :label="__('Repository')"
                     />
                 </flux:tooltip>
+                @guest
+                <flux:tooltip :content="__('Login')" position="bottom">
+                    <flux:navbar.item
+                        class="h-10 max-lg:hidden [&>div>svg]:size-5"
+                        icon="user"
+                        href="/login"
+                        target="_self"
+                        :label="__('Login')"
+                    />
+                </flux:tooltip>
+                @endguest
                
             </flux:navbar>
           
@@ -100,11 +115,14 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')">
-                    <flux:navlist.item icon="layout-grid" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>
+                    <flux:navlist.item icon="home" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>
                     {{ __('Home') }}
                     </flux:navlist.item>
-                    <flux:navlist.item icon="layout-grid" :href="route('bookings')" :current="request()->routeIs('bookings')" wire:navigate>
+                    <flux:navlist.item icon="clipboard-document-list" :href="route('bookings')" :current="request()->routeIs('bookings')" wire:navigate>
                     {{ __('Book A Trip') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="credit-card" :href="route('mybookings')" :current="request()->routeIs('mybookings')" wire:navigate>
+                    {{ __('My Bookings') }}
                     </flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>

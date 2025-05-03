@@ -64,3 +64,8 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+/* body{
+    background-image: url('../../public/images/bg2.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+} */

@@ -31,6 +31,7 @@ class BookingModal extends Component
 
     public function openModal($tripId)
     {
+        
         $this->tripId = $tripId;
         $trip = Trips::with(['routes', 'bus'])->findOrFail($this->tripId);
         $this->tripDepartureTime = $trip->departure_time;
@@ -48,6 +49,7 @@ class BookingModal extends Component
         $this->busId = $trip->bus->id;
         $this->seatsAvailable = null; // Will be updated once tripDate is selected
         $this->show = true;
+        
     }
 
     public function updatedTripDate($value)
@@ -112,6 +114,11 @@ class BookingModal extends Component
         $user = Auth::user();
 
         // Create booking
+        if(!$user){
+            $this->closeModal();
+            session()->flash('error', 'Must be Logged In to enable Booking.');
+           $this->redirectIntended('/login');   
+        }
        
 
         if ($validated['seatsbooked']) {
@@ -159,7 +166,7 @@ class BookingModal extends Component
        $this->redirectIntended();
 
     }
-
+   
     public function submitPayment()
     {
         // Placeholder for future payment logic
