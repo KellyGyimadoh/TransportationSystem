@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\CheckPaymentStatus;
 use App\Console\Commands\CheckTripStatuses;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -10,3 +11,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command(CheckTripStatuses::class)->everyMinute();
+Schedule::command(CheckPaymentStatus::class)->everyMinute();

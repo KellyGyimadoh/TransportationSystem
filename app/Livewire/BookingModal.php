@@ -62,7 +62,7 @@ class BookingModal extends Component
         if ($selectedDate === today()->toDateString() && $fullTripDateTime->lt(now())) {
             $this->closeModal();
             session()->flash('error', 'You can no longer book for today. This trip has already departed.');
-            $this->redirect('/bookings');
+            $this->redirectIntended();
             
         }
 

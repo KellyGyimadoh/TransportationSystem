@@ -11,10 +11,12 @@ use Livewire\Component;
 
 class PaymentsPage extends Component
 {
+    protected $listeners=['paymentSuccessful'];
     public Bookings $bookings;
     public $amount=null;
 
     public $paymentMethod;
+  
     public function makePayment(){
         if($this->bookings->user_id !== Auth::user()->id){
             abort(403,'unauthorized access');
@@ -23,12 +25,48 @@ class PaymentsPage extends Component
             session()->flash('error','Payment Made Already');
             $this->redirectIntended('mybookings');
            
-        }else{
-        $this->validate(['paymentMethod'=>['required']]);
-        $payments=Payment::create([
+        }
+        $this->dispatch('initiatePaystack', [
+            'email' => $this->bookings->user->email,
+            'amount' => $this->amount * 100, // Paystack expects amount in kobo
+            'reference' => uniqid('PS_'), // or use a UUID
+            'callback_url'=>'transport.test'
+        ]);
+        
+    //     else{
+    //    // $this->validate(['paymentMethod'=>['required']]);
+
+    //     $payments=Payment::create([
+    //         'booking_id'=>$this->bookings->id,
+    //         'amount'=>$this->amount,
+    //             'payment_method'=>$this->paymentMethod,
+    //             'status'=>'successful'
+    //     ]);
+    //     $this->bookings->update(['payment_status'=>'paid','status'=>'confirmed']);
+    //     if($payments->status=='successful'){
+        
+    //        foreach ($this->bookings->seatReservations as $seat) {
+    //         $seat->update(['status'=>'booked']);
+    //         Tickets::create(['booking_id' => $this->bookings->id,
+    //                                     'seat_reservation_id' => $seat->id,
+    //                                     'ticket_number'=>uniqid('TT').$seat->id,
+    //                                     'issued_by'=>Auth::user()->id,
+    //                                     'issued_for'=>$this->bookings->user_id,
+    //                                     'trip_date'=>Carbon::parse($this->bookings->trip_date)->toDateString(),
+    //                                     'status'=> 'valid',
+    //     ]);
+    //        }
+    //     }
+    //     session()->flash('success','Payment Successful');
+    //     $this->redirectRoute('tickets', $this->bookings);
+    // }
+    }
+
+    public function paymentSuccessful($response){
+      $payments=Payment::create([
             'booking_id'=>$this->bookings->id,
             'amount'=>$this->amount,
-                'payment_method'=>$this->paymentMethod,
+                'payment_method'=>'paystack',
                 'status'=>'successful'
         ]);
         $this->bookings->update(['payment_status'=>'paid','status'=>'confirmed']);
@@ -48,7 +86,7 @@ class PaymentsPage extends Component
         }
         session()->flash('success','Payment Successful');
         $this->redirectRoute('tickets', $this->bookings);
-    }
+    
     }
     public function mount(Bookings $bookings){
         $this->bookings=$bookings;
@@ -58,5 +96,36 @@ class PaymentsPage extends Component
     public function render()
     {
         return view('livewire.payments-page');
+    }
+
+    public function initializeTransaction(){
+        $url = config('services.paystack.transactionurl');
+
+        $fields = [
+          'email' => $this->bookings->user->email,
+          'amount' => $this->amount,
+        ];
+      
+        $fields_string = http_build_query($fields);
+      
+        //open connection
+        $ch = curl_init();
+        
+        //set the url, number of POST vars, POST data
+        curl_setopt($ch,CURLOPT_URL, $url);
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+          "Authorization: Bearer SECRET_KEY",
+          "Cache-Control: no-cache",
+        ));
+        
+        //So that curl_exec returns the contents of the cURL; rather than echoing it
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+        
+        //execute post
+        $result = curl_exec($ch);
+       
+      
     }
 }

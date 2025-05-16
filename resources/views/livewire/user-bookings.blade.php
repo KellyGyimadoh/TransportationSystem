@@ -68,10 +68,18 @@
                             </button></a>   
                                     @break
                                 @case('unpaid')
+                                @if($userbooking->status==='canceled')
+                               <button 
+                                class="px-3 py-1 bg-indigo-500 text-white rounded">
+                                Payment Incomplete
+                                </button>   
+                                @else
                                 <a href="{{ route('payment',$userbooking->id) }}" wire:navigate><button 
                                 class="px-3 py-1 bg-blue-500 text-white rounded">
                                 Make Payment
+                                @endif
                             </button></a>
+                            
                                 @break
                             
                                 @default

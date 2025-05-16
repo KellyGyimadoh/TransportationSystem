@@ -69,3 +69,9 @@ select:focus[data-flux-control] {
     background-repeat: no-repeat;
     background-size: cover;
 } */
+
+.firstslide{
+    background-repeat: no-repeat;
+background-position: center;
+background-size: cover;
+}

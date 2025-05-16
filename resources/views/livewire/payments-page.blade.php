@@ -21,11 +21,14 @@
 <div>
     <h3>Payment Status: {{ $bookings->payment_status }}</h3>
 </div>
-<flux:radio.group wire:model="paymentMethod" label="Select your payment method">
+
+ 
+
+<!-- <flux:radio.group wire:model="paymentMethod" label="Select your payment method">
     <flux:radio value="card" label="Credit Card" checked />
     <flux:radio value="cash" label="Cash" />
     <flux:radio value="mobile_money" label="Mobile Money" />
-</flux:radio.group>
+</flux:radio.group> -->
 
 
         <div class="flex items-center justify-end">
@@ -40,3 +43,24 @@
         <flux:link :href="route('mybookings')" wire:navigate>{{ __('View My Bookings') }}</flux:link>
     </div>
 </div>
+@script
+<script>
+    window.addEventListener('initiatePaystack', function (e) {
+        console.log(e);
+        let handler = PaystackPop.setup({
+            key: '{{ config('services.paystack.key') }}',
+            email: e.detail[0].email,
+            amount: e.detail[0].amount,
+            ref: e.reference,
+            callback: function(response) {
+                // Payment success
+                Livewire.emit('paymentSuccessful', response.reference);
+            },
+            onClose: function() {
+                alert('Transaction was not completed.');
+            }
+        });
+        handler.openIframe();
+    });
+</script>
+@endscript

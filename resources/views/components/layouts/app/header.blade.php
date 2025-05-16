@@ -139,8 +139,11 @@
         </flux:sidebar>
        
         {{ $slot }}
-
+       
         @fluxScripts
         @livewireScripts
+        <script src="https://js.paystack.co/v1/inline.js"></script>
+
+       
     </body>
 </html>

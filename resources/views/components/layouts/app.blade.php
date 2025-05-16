@@ -1,6 +1,6 @@
 <x-layouts.app.header :title="$title ?? null">
 
-    <flux:main>
+    <main>
        
     @if (session('success'))
    
@@ -20,5 +20,8 @@
 @endif
     
         {{ $slot }}
-    </flux:main>
+    </main>
+    <livewire:footer/> 
 </x-layouts.app.header>
+
+

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Http\Resources\TripsResource;
 use App\Models\Trips;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Validation\ValidationException;
 use Filament\Pages\Page;
 use Illuminate\Support\ServiceProvider;
@@ -40,5 +41,7 @@ class AppServiceProvider extends ServiceProvider
            $view->with('trips',$trips);
 
         });
+
+        Vite::prefetch(3);
     }
 }
