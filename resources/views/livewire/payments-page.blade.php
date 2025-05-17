@@ -46,21 +46,23 @@
 @script
 <script>
     window.addEventListener('initiatePaystack', function (e) {
-        console.log(e);
+        const data=e.detail;
+       
         let handler = PaystackPop.setup({
             key: '{{ config('services.paystack.key') }}',
-            email: e.detail[0].email,
-            amount: e.detail[0].amount,
-            ref: e.reference,
+            email: data.email,
+            amount: data.amount,
+            ref: data.reference,
+            currency:'GHS',
             callback: function(response) {
                 // Payment success
-                Livewire.emit('paymentSuccessful', response.reference);
+                Livewire.dispatch('paymentSuccessful',{response: response});
             },
             onClose: function() {
                 alert('Transaction was not completed.');
             }
         });
-        handler.openIframe();
+       handler.openIframe();
     });
 </script>
 @endscript

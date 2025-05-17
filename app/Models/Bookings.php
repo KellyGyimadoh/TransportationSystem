@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Bookings extends Model
 {
@@ -12,22 +13,23 @@ class Bookings extends Model
     protected $fillable = ['user_id', 'trip_id', 'status', 'payment_status','trip_date'];
 
 
-    protected static function booted()
+    protected static function boot()
 {
-    // static::created(function (Bookings $booking) {
-    //     $seatIds = $booking->seats()->pluck('seats.id')->toArray();
-    //     dd($seatIds);
-    //     // Optional: revert all seats previously assigned to this booking
-    //     Seats::whereIn('id', $seatIds)
-    //         ->update(['status' => 'booked']);
+    parent::boot();
+     static::creating(function (Bookings $booking) {
+   $booking->slug=Str::uuid()->toString();
 
        
-    // });
+     });
 
     // static::deleting(function (Bookings $booking) {
     //     // When the booking is deleted, update the status of all associated seats to 'available'
     //     $booking->seats()->update(['status' => 'available']);
     // });
+}
+
+public function getRouteKeyName(){
+    return 'slug';
 }
 public function seatReservations()
 {

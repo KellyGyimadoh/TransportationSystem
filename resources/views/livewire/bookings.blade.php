@@ -88,7 +88,7 @@
 
 
 
-    <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400">
+    <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400 mb-3">
        
        <flux:button> <flux:link :href="route('mybookings')" wire:navigate>
        {{ __('View My Bookings') }}</flux:link></flux:button>

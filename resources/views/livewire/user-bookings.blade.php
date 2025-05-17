@@ -35,7 +35,7 @@
                     {{ $userbooking->seatReservations->count() }}
                    </td>
                         <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800"> {{ $userbooking->status }}</td>
-                        <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800">GHS {{ $userbooking->trip->price }}</td>
+                        <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800">GHS {{ $userbooking->trip->price * $userbooking->seatReservations->count() }}</td>
                         <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800"> 
                         @switch($userbooking->payment_status)
                             @case('paid')
@@ -62,7 +62,7 @@
                         <td class="px-6 py-4">
                             @switch( $userbooking->payment_status)
                                 @case('paid')
-                               <a href="{{ route('tickets',$userbooking->id) }}" wire:navigate> <button 
+                               <a href="{{ route('tickets',$userbooking->slug) }}" wire:navigate> <button 
                                 class="px-3 py-1 bg-gray-500 text-white rounded">
                                 Print Ticket Receipt
                             </button></a>   
@@ -74,7 +74,7 @@
                                 Payment Incomplete
                                 </button>   
                                 @else
-                                <a href="{{ route('payment',$userbooking->id) }}" wire:navigate><button 
+                                <a href="{{ route('payment',$userbooking->slug) }}" wire:navigate><button 
                                 class="px-3 py-1 bg-blue-500 text-white rounded">
                                 Make Payment
                                 @endif
@@ -104,7 +104,7 @@
 
 
 
-    <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400">
+    <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400 mb-3">
        
        <flux:button> <flux:link :href="route('mybookings',Auth::user())" wire:navigate>
        {{ __('View My Bookings') }}</flux:link></flux:button>
